@@ -1,41 +1,14 @@
-import {
-  Card as MantineCard,
-  CloseButton,
-  Divider,
-  Flex,
-  Text,
-} from "@mantine/core";
+import { Card as MantineCard, Flex, Text } from "@mantine/core";
 import type { PropsWithChildren, ReactNode } from "react";
 import { ClimbingBoxLoader } from "react-spinners";
-
-type ActionsFunction = (props: { gap: number }) => ReactNode;
-type CardActionsProps = {
-  actions?: ReactNode | (ReactNode | ActionsFunction)[] | ActionsFunction;
-};
-const CardActions = ({ actions }: CardActionsProps) => {
-  const actionsGap = 12;
-
-  return (
-    <Flex
-      gap={actionsGap}
-      justify={Array.isArray(actions) ? "space-between" : "flex-end"}
-    >
-      {typeof actions === "function"
-        ? actions({ gap: actionsGap })
-        : Array.isArray(actions)
-          ? actions.map((a) => {
-              if (typeof a === "function") return a({ gap: actionsGap });
-              else return a;
-            })
-          : actions}
-    </Flex>
-  );
-};
+import type { ActionButtonsProps } from "../layout/ActionButtons.tsx";
+import ActionButtons from "../layout/ActionButtons.tsx";
 
 export type CardProps = {
-  title?: ReactNode;
+  title?: string | ReactNode;
   loading?: boolean;
-} & CardActionsProps;
+  actions?: ActionButtonsProps["actions"];
+};
 export const Card = ({
   children,
   title,
@@ -45,17 +18,11 @@ export const Card = ({
   return (
     <MantineCard withBorder>
       <Flex justify={"space-between"}>
-        <Text>{title}</Text>
-        <CloseButton onClick={() => console.log("close")} />
+        {typeof title === "string" ? <Text>{title}</Text> : title}
       </Flex>
       {loading ? <ClimbingBoxLoader /> : <></>}
       <div>{children}</div>
-      {actions && (
-        <>
-          <Divider mt={"sm"} mb={"sm"} />
-          <CardActions {...{ actions }} />
-        </>
-      )}
+      {actions && <ActionButtons.Row actions={actions} withDivider />}
     </MantineCard>
   );
 };
