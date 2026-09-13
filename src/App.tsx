@@ -2,10 +2,11 @@ import "@mantine/core/styles.css";
 import "./App.css";
 import { useBuckets } from "./api/buckets/Buckets.ts";
 import { AppShell, Button, Flex, MantineProvider } from "@mantine/core";
-import { Card } from "./components/card/Card.tsx";
+import { Card } from "./components/card/core/Card.tsx";
 import { useNavbar } from "./layout/useNavbar.tsx";
 import { Modal } from "./components/modal/Modal.tsx";
 import { useState } from "react";
+import { AccountCard } from "./components/card/account-card/AccountCard.tsx";
 
 function App() {
   const { useGetAll: getAllBuckets } = useBuckets();
@@ -26,6 +27,7 @@ function App() {
       >
         <Navbar />
         <AppShell.Main>
+          <AccountCard />
           <Card
             title={"Buckets"}
             loading={isFetching}

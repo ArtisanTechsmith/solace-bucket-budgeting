@@ -1,8 +1,8 @@
 import { Card as MantineCard, Flex, Text } from "@mantine/core";
 import type { PropsWithChildren, ReactNode } from "react";
 import { ClimbingBoxLoader } from "react-spinners";
-import type { ActionButtonsProps } from "../layout/ActionButtons.tsx";
-import ActionButtons from "../layout/ActionButtons.tsx";
+import type { ActionButtonsProps } from "../../layout/ActionButtons.tsx";
+import ActionButtons from "../../layout/ActionButtons.tsx";
 
 export type CardProps = {
   title?: string | ReactNode;
