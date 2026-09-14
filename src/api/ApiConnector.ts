@@ -1,4 +1,4 @@
-import {Envelope} from "./Envelope.ts";
+import { Envelope } from "./Envelope.ts";
 
 type HttpMethod = "GET" | "POST" | "PUT" | "DELETE";
 
@@ -10,55 +10,89 @@ export class ApiConnector<ResponseType extends object> {
   }
 
   //#region Api Methods
-  async getAll(): Promise<Envelope<ResponseType>> {
-    return await this.sendRequest("GET")
+  async getById(id: number): Promise<Envelope<ResponseType>> {
+    return await this.sendRequest("GET", id);
   }
 
-  async update<T>(body: T): Promise<Envelope<ResponseType>> {
-    return await this.sendRequest("PUT", body)
+  async getAll(): Promise<Envelope<ResponseType>> {
+    return await this.sendRequest("GET");
+  }
+
+  async update<T>(body: T, id?: number): Promise<Envelope<ResponseType>> {
+    return await this.sendRequest(
+      "PUT",
+      body,
+      id ?? (body as { id: number }).id,
+    );
   }
 
   async create<T>(body: T): Promise<Envelope<ResponseType>> {
-    return await this.sendRequest("POST", body)
+    return await this.sendRequest("POST", body);
   }
 
-  async delete(): Promise<Envelope<ResponseType>> {
-    return await this.sendRequest("DELETE")
+  async delete(id: number): Promise<Envelope<ResponseType>> {
+    return await this.sendRequest("DELETE", id);
   }
   //#endregion
 
   //#region Inner Utility Methods
-  private async sendRequest(method: "GET"): Promise<Envelope<ResponseType>>;
-  private async sendRequest<T>(method: "POST", body: T): Promise<Envelope<ResponseType>>;
-  private async sendRequest<T>(method: "PUT", body: T): Promise<Envelope<ResponseType>>;
-  private async sendRequest(method: "DELETE"): Promise<Envelope<ResponseType>>;
-  private async sendRequest<T>(method: HttpMethod, body?: T): Promise<Envelope<ResponseType>> {
-    await this.simulateRequest()
-    const promise = fetch(this.getUrl(), {
+  private async sendRequest(
+    method: "GET",
+    id?: number,
+  ): Promise<Envelope<ResponseType>>;
+  private async sendRequest<T>(
+    method: "POST",
+    body: T,
+  ): Promise<Envelope<ResponseType>>;
+  private async sendRequest<T>(
+    method: "PUT",
+    body: T,
+    id?: number,
+  ): Promise<Envelope<ResponseType>>;
+  private async sendRequest(
+    method: "DELETE",
+    id: number,
+  ): Promise<Envelope<ResponseType>>;
+  private async sendRequest<T extends object>(
+    method: HttpMethod,
+    input?: T | number,
+    identifier?: number,
+  ): Promise<Envelope<ResponseType>> {
+    await this.simulateRequest();
+
+    const body = typeof input === "object" ? input : undefined;
+    const id = typeof input === "number" ? input : identifier;
+    const promise = fetch(this.getUrl(id), {
       method,
       body: body ? JSON.stringify(body) : undefined,
-    })
-    return await this.simulateResponse(promise)
+    });
+
+    return await this.simulateResponse(promise);
   }
 
-  private getUrl() {
-    return `${import.meta.env.VITE_API_HOST}/${this.endpoint}`;
+  private getUrl(id?: number): string {
+    return `${import.meta.env.VITE_API_HOST}/${this.endpoint}${id ? `/${id}` : ""}`;
   }
   //#endregion
 
   //#region Simulate Real Server Activity. Temporary/Local-Only.
   private async simulateRequest(): Promise<void> {
-    await new Promise(resolve => {
+    await new Promise((resolve) => {
       setTimeout(() => {
-        resolve(null as never)
-      }, 500)
-    })
+        resolve(null as never);
+      }, 500);
+    });
   }
 
-  private async simulateResponse(promise: Promise<Response>): Promise<Envelope<ResponseType>> {
+  private async simulateResponse(
+    promise: Promise<Response>,
+  ): Promise<Envelope<ResponseType>> {
     try {
       const resp = await promise;
-      return await resp.json() as Envelope<ResponseType>;
+      const json = await resp.json();
+      return new Envelope<ResponseType>({
+        data: Array.isArray(json) ? json : [json],
+      });
     } catch (_error) {
       const error = _error as Error;
       return new Envelope<ResponseType>({ errors: [error.message] });

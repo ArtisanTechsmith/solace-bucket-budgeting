@@ -1,23 +1,62 @@
 import ColorSelect from "../../color/ColorSelect.tsx";
-import { Card } from "../core/Card.tsx";
+import Card from "../core/Card.tsx";
 import { PaletteIcon } from "@phosphor-icons/react";
-import { ActionIcon } from "@mantine/core";
-import type { AccountDto } from "../../../api/accounts/AccountDto.ts";
+import { ActionIcon, Flex, Text } from "@mantine/core";
+import {
+  type ColorOption,
+  useColorOptions,
+} from "../../color/hooks/useColorOptions.ts";
+import MotionExpandRTL from "../../motion/MotionExpandRTL.tsx";
+import { useEffect, useMemo, useState } from "react";
+import { useAccounts } from "../../../api/accounts/Accounts.ts";
 
 export type AccountCardProps = {
-  account: AccountDto;
+  accountId: number;
 };
-export const AccountCard = () => {
+export const AccountCard = ({ accountId }: AccountCardProps) => {
+  const COLOR_OPTIONS = useColorOptions();
+  const { useGetById, useUpdate } = useAccounts();
+
+  const { data: envelope } = useGetById(accountId);
+  const account = useMemo(() => envelope?.data?.[0], [envelope]);
+
+  const { mutateAsync } = useUpdate();
+
+  const [expandPalette, setExpandPalette] = useState(false);
+  const [backgroundColor, setBackgroundColor] = useState<ColorOption>();
+  useEffect(() => {
+    setBackgroundColor(account?.color);
+  }, [account?.color]);
+
+  async function handleColorSelect(color: ColorOption): Promise<void> {
+    setBackgroundColor(color);
+    await mutateAsync({ ...account, color });
+  }
+
   return (
     <Card
-      title={[
-        <div />,
-        <ActionIcon variant={"default"}>
-          <PaletteIcon size={16} />
-        </ActionIcon>,
-      ]}
+      title={
+        <>
+          <Text>{account?.name}</Text>
+          <Flex gap={"sm"}>
+            <MotionExpandRTL isOpen={expandPalette}>
+              <ColorSelect onChange={handleColorSelect} />
+            </MotionExpandRTL>
+            <ActionIcon
+              variant={"default"}
+              onClick={() => setExpandPalette((prev) => !prev)}
+            >
+              <PaletteIcon size={16} />
+            </ActionIcon>
+          </Flex>
+        </>
+      }
+      style={{
+        transition: "background 0.2s ease-in-out",
+        background: COLOR_OPTIONS[backgroundColor as ColorOption]?.background,
+      }}
     >
-      <ColorSelect onChange={(v) => console.log(v)} />
+      {JSON.stringify(envelope ?? {})}
     </Card>
   );
 };

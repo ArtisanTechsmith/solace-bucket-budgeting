@@ -24,11 +24,11 @@ const MotionGrow = ({
 
   const ref = useCallbackRef((node: HTMLDivElement) => {
     if (withHoverControl) {
-      node.addEventListener("mouseenter", (e) => {
+      node?.addEventListener("mouseenter", (e) => {
         e.preventDefault();
         void grow();
       });
-      node.addEventListener("mouseleave", (e) => {
+      node?.addEventListener("mouseleave", (e) => {
         e.preventDefault();
         void restore();
       });

@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { ActionIcon, AppShell, Group, Stack } from "@mantine/core";
-import { MotionRotate } from "../components/motion/MotionRotate.tsx";
+import { MotionRotate } from "../../components/motion/MotionRotate.tsx";
 import { CaretLeftIcon } from "@phosphor-icons/react";
 import type { ReactNode } from "react";
 

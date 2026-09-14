@@ -1,7 +1,69 @@
 {
+  "accounts": [
+    {
+      "id": "1",
+      "name": "Primary Checking",
+      "balance": 5000.75,
+      "buckets": [
+        1,
+        2
+      ],
+      "color": "red"
+    },
+    {
+      "id": "2",
+      "name": "Secondary Savings",
+      "balance": 150,
+      "buckets": [
+        3
+      ]
+    },
+    {
+      "id": "3",
+      "name": "Joint Account",
+      "balance": 875.2,
+      "buckets": [
+        4,
+        5
+      ]
+    }
+  ],
   "buckets": [
     {
-      "name": "Bucket 1"
+      "id": "1",
+      "bucketId": "b1",
+      "name": "Savings Goals",
+      "amount": 2000,
+      "accountId": 1
+    },
+    {
+      "id": "2",
+      "bucketId": "b2",
+      "name": "Emergency Fund",
+      "amount": 3000,
+      "accountId": 1
+    },
+    {
+      "id": "3",
+      "bucketId": "b3",
+      "name": "Travel Fund",
+      "amount": 150,
+      "accountId": 2
+    },
+    {
+      "id": "4",
+      "bucketId": "b4",
+      "name": "Groceries",
+      "amount": 50,
+      "accountId": 3
+    },
+    {
+      "id": "5",
+      "bucketId": "b5",
+      "name": "Utilities",
+      "amount": 30,
+      "accountId": 3
     }
-  ]
+  ],
+  "$schema": "./node_modules/json-server/schema.json"
 }

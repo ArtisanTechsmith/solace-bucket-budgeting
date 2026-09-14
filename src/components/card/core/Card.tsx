@@ -1,5 +1,5 @@
 import { Card as MantineCard, Flex, Text } from "@mantine/core";
-import type { PropsWithChildren, ReactNode } from "react";
+import type { CSSProperties, PropsWithChildren, ReactNode } from "react";
 import { ClimbingBoxLoader } from "react-spinners";
 import type { ActionButtonsProps } from "../../layout/ActionButtons.tsx";
 import ActionButtons from "../../layout/ActionButtons.tsx";
@@ -8,15 +8,17 @@ export type CardProps = {
   title?: string | ReactNode;
   loading?: boolean;
   actions?: ActionButtonsProps["actions"];
+  style?: CSSProperties;
 };
-export const Card = ({
+const Card = ({
   children,
   title,
   loading,
   actions,
+  style,
 }: PropsWithChildren<CardProps>) => {
   return (
-    <MantineCard withBorder>
+    <MantineCard withBorder {...{ style }}>
       <Flex justify={"space-between"}>
         {typeof title === "string" ? <Text>{title}</Text> : title}
       </Flex>
@@ -26,3 +28,5 @@ export const Card = ({
     </MantineCard>
   );
 };
+
+export default Card;

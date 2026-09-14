@@ -1,7 +1,7 @@
-import {ApiConnector} from "../ApiConnector.ts";
-import type {BucketDto} from "./BucketDto.ts";
-import {useQuery, type UseQueryResult} from "@tanstack/react-query";
-import type {Envelope} from "../Envelope.ts";
+import { ApiConnector } from "../ApiConnector.ts";
+import type { BucketDto } from "./BucketDto.ts";
+import { useQuery, type UseQueryResult } from "@tanstack/react-query";
+import type { Envelope } from "../Envelope.ts";
 
 class Buckets extends ApiConnector<BucketDto> {
   constructor() {
@@ -16,9 +16,10 @@ class Buckets extends ApiConnector<BucketDto> {
 export const useBuckets = () => {
   const model = new Buckets();
   return {
-    useGetAll: (): UseQueryResult<Envelope<BucketDto>> => useQuery({
-      queryKey: ["buckets", "getAll"],
-      queryFn: async () => await model.getAll(),
-    })
-  }
-}
+    useGetAll: (): UseQueryResult<Envelope<BucketDto>> =>
+      useQuery({
+        queryKey: ["buckets", "getAll"],
+        queryFn: async () => await model.getAll(),
+      }),
+  };
+};

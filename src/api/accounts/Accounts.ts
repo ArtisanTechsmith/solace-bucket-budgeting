@@ -1,25 +1,35 @@
 import { ApiConnector } from "../ApiConnector.ts";
 import type { AccountDto } from "./AccountDto.ts";
-import type { Envelope } from "../Envelope.ts";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 
 class Accounts extends ApiConnector<AccountDto> {
-  constructor() {
-    super("accounts");
-  }
+  public static endpoint: string = "accounts";
 
-  async getAll(): Promise<Envelope<AccountDto>> {
-    return await super.getAll();
+  constructor() {
+    super(Accounts.endpoint);
   }
 }
 
 export const useAccounts = () => {
   const instance = new Accounts();
   return {
+    useGetById: (id: number) => {
+      return useQuery({
+        queryKey: [Accounts.endpoint, "getById", id],
+        queryFn: async () => await instance.getById(id),
+      });
+    },
     useGetAll: () => {
       return useQuery({
-        queryKey: ["accounts", "getAll"],
+        queryKey: [Accounts.endpoint, "getAll"],
         queryFn: async () => await instance.getAll(),
+      });
+    },
+    useUpdate: () => {
+      return useMutation({
+        mutationKey: [Accounts.endpoint, "update"],
+        mutationFn: async (model: Partial<AccountDto>) =>
+          await instance.update(model),
       });
     },
   };
